@@ -31,32 +31,29 @@ app.get('/api/update-db/:password',function(req,res){
 });
 
 app.get('/api/get-courses/:subject1?/:subject2?/:subject3?/:subject4?/:subject5?',function(req,res){
-    res.write('puta');
-    console.log(typeof(req.params))
+    // Set the response headers so that the data is returned as STRING
+    res.setHeader('Content-Type', 'application/json');
+    // req.params is an object that contains all the our 5 optional subjects
+    for (const key of Object.keys(req.params)) {
+        // if the key is not empty list then we have a collection.
+        if (req.params[key] !== undefined) {
+            // Find all the JSON objects in the collection
+            lecture.find({courseName: req.params[key]}).then(function(results){
+                // For every JSON object in the collection convert to string and send back response
+                results.forEach(function(result){
+                    if (result !== []) {
+                        res.write(JSON.stringify(result));
+                    }
+                    // For Debugging
+                    // result !== [] ? console.log(result) : null;
+                })
+            // ERROR handling
+            }).catch(function(error){
+                console.log(error);
+            });
+        }
+    }
     res.send();
-    // // Set the response headers so that the data is returned as STRING
-    // res.setHeader('Content-Type', 'application/json');
-    // // req.params is an object that contains all the our 5 optional subjects
-    // for (const key of Object.keys(req.params)) {
-    //     // if the key is not empty list then we have a collection.
-    //     if (req.params[key] !== undefined) {
-    //         // Find all the JSON objects in the collection
-    //         lecture.find({courseName: req.params[key]}).then(function(results){
-    //             // For every JSON object in the collection convert to string and send back response
-    //             results.forEach(function(result){
-    //                 if (result !== []) {
-    //                     res.write(JSON.stringify(result));
-    //                 }
-    //                 // For Debugging
-    //                 // result !== [] ? console.log(result) : null;
-    //             })
-    //         // ERROR handling
-    //         }).catch(function(error){
-    //             console.log(error);
-    //         });
-    //     }
-    // }
-    // res.send();
 });
 
 
